@@ -1,32 +1,48 @@
 import React from 'react';
 
-function Card({ data }) {
+const flagData = [
+  { abbreviation: 'AR', fileName: 'AR.gif' },
+  { abbreviation: 'AN', fileName: 'AN.gif' },
+  { abbreviation: 'O', fileName: 'O.gif' },
+  { abbreviation: 'IB', fileName: 'IB.gif' },
+  { abbreviation: 'CN', fileName: 'CN.png' },
+  { abbreviation: 'S', fileName: 'S.gif' },
+  { abbreviation: 'CL', fileName: 'CL.gif' },
+  { abbreviation: 'CM', fileName: 'CM.gif' },
+  { abbreviation: 'CT', fileName: 'CT.gif' },
+  { abbreviation: 'VC', fileName: 'VC.gif' },
+  { abbreviation: 'EX', fileName: 'EX.gif' },
+  { abbreviation: 'GA', fileName: 'GA.gif' },
+  { abbreviation: 'M', fileName: 'M.gif' },
+  { abbreviation: 'MU', fileName: 'MU.gif' },
+  { abbreviation: 'NA', fileName: 'NA.gif' },
+  { abbreviation: 'PV', fileName: 'PV.gif' },
+  { abbreviation: 'LO', fileName: 'LO.png' },
+  { abbreviation: 'CE', fileName: 'CE.gif' },
+  { abbreviation: 'ML', fileName: 'ML.gif' }
+];
+
+export function Card({ data }) {
+  const stateAbbreviation = data.regionAbbreviation;
+  const flagObject = flagData.find(flag => flag.abbreviation === stateAbbreviation);
+
+  const flagFileName = flagObject ? flagObject.fileName : null;
+
+  const flagImagePath = flagFileName
+    ? require(`./flags/${flagFileName}`).default
+    : null;
+
   return (
     <div className="card">
-      <img src={data.flag} alt="Bandera" />
-      <h2>Ciudad: {data.city}</h2>
-      <p>Comunidad: {data.region}</p>
-      <div className="weather-info">
-        <h3>Información climática:</h3>
-        <div className="temperature-chart">
-          <div className="temperature-axis">
-            <span>{data.minTemperature}°C</span>
-            <span>{data.maxTemperature}°C</span>
+      <div className="card-content">
+        {flagImagePath && (
+          <div className="flag-image">
+            <img src={flagImagePath} alt="Bandera" />
           </div>
-          <div className="temperature-bars">
-            {data.weatherData.map((temperature, index) => (
-              <div
-                key={index}
-                className="temperature-bar"
-                style={{ height: `${temperature}px` }}
-              ></div>
-            ))}
-          </div>
-          <div className="temperature-labels">
-            {data.weatherData.map((temperature, index) => (
-              <span key={index}>{temperature}°C</span>
-            ))}
-          </div>
+        )}
+        <div className="card-details">
+          <h4>Ciudad: {data.city}</h4>
+          <h4>Comunidad: {data.region}</h4>
         </div>
       </div>
     </div>

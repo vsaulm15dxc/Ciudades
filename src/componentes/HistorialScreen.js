@@ -1,30 +1,40 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
-function HistorialScreen() {
-  const historial = useNavigate();
-  const buscarResult = historial.location.state;
+import { HistoryContext } from "./HistoryContextProvider";
+
+const HistorialScreen = () => {
+  const { history } = useContext(HistoryContext);
+  const navigate = useNavigate();
+
+  const handleNavigate = (codigoPostal) => {
+    navigate("/buscar/" + codigoPostal);
+  };
 
   return (
-    <div className="historial-screen">
-      <h1>Historial de Búsquedas</h1>
-      {buscarResult ? (
-        <div className="historial-card">
-          <h2>Código Postal: {buscarResult.codigoPostal}</h2>
-          <p>Ciudad: {buscarResult.ciudad}</p>
-          <p>Región: {buscarResult.region}</p>
-          <p>Datos climáticos:</p>
-          <ul>
-            {buscarResult.weatherData.map((temperature, index) => (
-              <li key={index}>Temperatura: {temperature}°C</li>
-            ))}
-          </ul>
-        </div>
+    <div className="container-historial">
+      {history.length === 0 ? (
+        <p>
+          No hay resultados de historial, realice alguna búsqueda previamente
+          para consultarlo
+        </p>
       ) : (
-        <p>No hay datos de búsqueda disponibles.</p>
+        history.map((item, index) => {
+          return (
+            <div
+              className="item-historial"
+              onClick={() => {
+                handleNavigate(item.codigoPostal);
+              }}
+            >
+              <div className="cp">{item.codigoPostal}</div>
+              {item.nombreCiudad} ({item.comunidad})
+            </div>
+          );
+        })
       )}
     </div>
   );
-}
+};
 
 export default HistorialScreen;

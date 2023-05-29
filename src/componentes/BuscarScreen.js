@@ -1,58 +1,133 @@
-// BuscarScreen.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BuscarForm from './FormularioBusqueda';
+import CollapsibleCard from './CollapsibleCard';
 import Card from './Card';
-import { useNavigate } from 'react-router-dom';
+import GeographicalCard from './GeographicalCard';
+import ClimaCard from './ClimaCard';
+import MainMenu from './MainMenu';
 
 function BuscarScreen() {
   const [buscarResult, setBuscarResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [postalCode, setPostalCode] = useState('');
+  const [historial, setHistorial] = useState([]);
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const handleSearch = async (postalCode) => {
+  useEffect(() => {
+    if (location.state && location.state.historial) {
+      setHistorial(location.state.historial);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    // Actualizar el estado de ubicación con el historial actualizado
+    navigate('.', { state: { historial }, replace: true });
+  }, [historial, navigate]);
+
+  const handleSearch = async (code) => {
     try {
-      const zipopotamResponse = await fetch(`https://api.zippopotam.us/es/${postalCode}`);
+      setLoading(true);
+
+      const zipopotamResponse = await fetch(`https://api.zippopotam.us/es/${code}`);
       if (!zipopotamResponse.ok) {
-        throw new Error('No se encontró información para el código postal ingresado.');
+        setBuscarResult(null);
+        setLoading(false);
+        return;
       }
       const zipopotamData = await zipopotamResponse.json();
 
-      const latitude = zipopotamData?.places[0]?.latitude;
-      const longitude = zipopotamData?.places[0]?.longitude;
+      const placeName = zipopotamData?.places?.[0]?.['place name'];
+      if (!placeName) {
+        setBuscarResult(null);
+        setLoading(false);
+        return;
+      }
+
+      const latitude = zipopotamData?.places?.[0]?.latitude;
+      const longitude = zipopotamData?.places?.[0]?.longitude;
+      const region = zipopotamData?.places?.[0]?.state;
+      const regionAbbreviation = zipopotamData?.places?.[0]?.state_abbreviation;
 
       const openMeteoResponse = await fetch(
-        `https://api.openmeteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m`
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=weathercode&forecast_days=1`
       );
       if (!openMeteoResponse.ok) {
-        throw new Error('No se pudo obtener la información climática.');
+        setBuscarResult(null);
+        setLoading(false);
+        return;
       }
       const openMeteoData = await openMeteoResponse.json();
 
-      const ciudad = zipopotamData?.places[0]?.placename;
-      const region = zipopotamData?.places[0]?.region;
-      const weatherData = openMeteoData?.hourly?.temperature_2m;
+      const weatherData = openMeteoData?.hourly?.weathercode;
 
       const buscarData = {
-        ciudad,
-        region,
-        weatherData,
+        codigoPostal: code,
+        city: placeName,
+        region: region,
+        regionAbbreviation: regionAbbreviation,
+        latitude: latitude,
+        longitude: longitude,
+        minTemperature: 0,
+        maxTemperature: 0,
+        weatherData: weatherData || [],
       };
 
       setBuscarResult(buscarData);
-      navigate('/historial', { state: buscarData });
+      setLoading(false);
+
+      // Añadir la búsqueda al historial
+      setHistorial(prevHistorial => [...prevHistorial, buscarData]);
     } catch (error) {
       console.error(error);
       setBuscarResult(null);
+      setLoading(false);
     }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (!postalCode) {
+      alert('Ingrese un código postal válido');
+      return;
+    }
+
+    if (isNaN(postalCode)) {
+      alert('El código postal debe ser numérico');
+      return;
+    }
+
+    handleSearch(postalCode);
   };
 
   return (
     <div className="buscar-screen">
-      <h1>Búsqueda de Código Postal</h1>
-      <BuscarForm onSearch={handleSearch} />
-      {buscarResult ? (
-        <Card data={buscarResult} />
-      ) : (
+      <MainMenu title="Ciudades" />
+      <BuscarForm
+        onSearch={handleSearch}
+        onChange={(event) => setPostalCode(event.target.value)}
+        onSubmit={handleSubmit}
+        disabled={loading}
+      />
+      {!buscarResult && !loading && postalCode && (
         <p>No se encontró información para el código postal ingresado.</p>
+      )}
+      {loading && <p>Realizando búsqueda...</p>}
+      {buscarResult && (
+        <div>
+          <h2>Ciudad: {buscarResult.city}</h2>
+          <CollapsibleCard title="Información política">
+            <Card data={buscarResult} />
+          </CollapsibleCard>
+          <CollapsibleCard title="Información climática">
+            <ClimaCard data={buscarResult} />
+          </CollapsibleCard>
+          <CollapsibleCard title="Información geográfica">
+            <GeographicalCard data={buscarResult} />
+          </CollapsibleCard>
+        </div>
       )}
     </div>
   );

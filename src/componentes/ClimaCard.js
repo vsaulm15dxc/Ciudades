@@ -3,7 +3,6 @@ import React from 'react';
 function ClimaCard({ data }) {
   return (
     <div className="clima-card">
-      <h3>Información climática:</h3>
       <div className="temperature-chart">
         <div className="temperature-axis">
           <span>{data.minTemperature}°C</span>

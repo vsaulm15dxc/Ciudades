@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './FormularioBusqueda.css';
 
 function FormularioBusqueda({ onSearch }) {
   const [postalCode, setPostalCode] = useState('');
@@ -9,16 +10,19 @@ function FormularioBusqueda({ onSearch }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="formulario-busqueda">
       <input
         type="text"
         value={postalCode}
         onChange={(e) => setPostalCode(e.target.value)}
         placeholder="Ingrese un código postal"
       />
-      <button type="submit">Buscar</button>
-    </form>
+      <button type="submit" onClick={handleSubmit}>
+        Buscar
+      </button>
+    </div>
   );
 }
 
 export default FormularioBusqueda;
+
