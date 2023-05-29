@@ -1,0 +1,44 @@
+.clima-card {
+    background-color: #f1f1f1;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+  
+  .temperature-chart {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .temperature-axis {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .temperature-axis span {
+    margin-bottom: 10px;
+  }
+  
+  .temperature-bars {
+    flex-grow: 1;
+    display: flex;
+    gap: 5px;
+  }
+  
+  .temperature-bar {
+    background-color: #337ab7;
+    width: 20px;
+  }
+  
+  .temperature-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .temperature-labels span {
+    font-size: 12px;
+  }
+  
