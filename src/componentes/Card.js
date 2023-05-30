@@ -22,7 +22,7 @@ const flagData = [
   { abbreviation: 'ML', fileName: 'ML.gif' }
 ];
 
-export function Card({ data }) {
+function Card({ data }) {
   const stateAbbreviation = data.regionAbbreviation;
   const flagObject = flagData.find(flag => flag.abbreviation === stateAbbreviation);
 

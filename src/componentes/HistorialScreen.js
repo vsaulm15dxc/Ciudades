@@ -1,38 +1,35 @@
 import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-
-import { HistoryContext } from "./HistoryContextProvider";
+import { Link, useNavigate } from "react-router-dom";
+import MainMenu from "./MainMenu";
+import { HistoryContext } from "./HistorialProvider";
+import "./HistorialScreen.css";
 
 const HistorialScreen = () => {
-  const { history } = useContext(HistoryContext);
   const navigate = useNavigate();
+  const [historial] = useContext(HistoryContext);
 
   const handleNavigate = (codigoPostal) => {
-    navigate("/buscar/" + codigoPostal);
+    const buscarData = historial.find((item) => item.codigoPostal === codigoPostal);
+    navigate("/", { state: { buscarData } });
   };
 
   return (
-    <div className="container-historial">
-      {history.length === 0 ? (
-        <p>
-          No hay resultados de historial, realice alguna búsqueda previamente
-          para consultarlo
-        </p>
-      ) : (
-        history.map((item, index) => {
-          return (
-            <div
-              className="item-historial"
-              onClick={() => {
-                handleNavigate(item.codigoPostal);
-              }}
-            >
-              <div className="cp">{item.codigoPostal}</div>
-              {item.nombreCiudad} ({item.comunidad})
-            </div>
-          );
-        })
-      )}
+    <div className="historial-screen">
+      <MainMenu />
+      <h1>Historial de Búsqueda</h1>
+      <table className="search-table">
+        <tbody>
+          {historial &&
+            historial.map((item, index) => (
+              <tr key={index} onClick={() => handleNavigate(item.codigoPostal)}>
+                <td className="postal-code">{item.codigoPostal}</td>
+                <td>
+                  {item.city}({item.region})
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
     </div>
   );
 };

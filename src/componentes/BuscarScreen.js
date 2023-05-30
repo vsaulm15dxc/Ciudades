@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BuscarForm from './FormularioBusqueda';
 import CollapsibleCard from './CollapsibleCard';
@@ -6,12 +6,13 @@ import Card from './Card';
 import GeographicalCard from './GeographicalCard';
 import ClimaCard from './ClimaCard';
 import MainMenu from './MainMenu';
+import { HistoryContext } from './HistorialProvider';
 
 function BuscarScreen() {
   const [buscarResult, setBuscarResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [postalCode, setPostalCode] = useState('');
-  const [historial, setHistorial] = useState([]);
+  const [historial, setHistorial] = useContext(HistoryContext); // Obtener el historial del contexto
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -19,16 +20,26 @@ function BuscarScreen() {
     if (location.state && location.state.historial) {
       setHistorial(location.state.historial);
     }
-  }, [location.state]);
+  }, [location.state, setHistorial]);
 
   useEffect(() => {
     // Actualizar el estado de ubicación con el historial actualizado
-    navigate('.', { state: { historial }, replace: true });
+    navigate('/', { state: { historial }, replace: true });
   }, [historial, navigate]);
+
+  useEffect(() => {
+    if (location.state && location.state.buscarData) {
+      const lastSearchResult = location.state.buscarData;
+      setBuscarResult(lastSearchResult);
+      setLoading(false);
+    }
+  }, [location.state]);
+  
 
   const handleSearch = async (code) => {
     try {
       setLoading(true);
+      let buscarData = null;
 
       const zipopotamResponse = await fetch(`https://api.zippopotam.us/es/${code}`);
       if (!zipopotamResponse.ok) {
@@ -62,7 +73,7 @@ function BuscarScreen() {
 
       const weatherData = openMeteoData?.hourly?.weathercode;
 
-      const buscarData = {
+      buscarData = {
         codigoPostal: code,
         city: placeName,
         region: region,
