@@ -8,12 +8,15 @@ import ClimaCard from './ClimaCard';
 import MainMenu from './MainMenu';
 import { HistoryContext } from './HistorialProvider';
 
+import loadingGif from './Images/loading.gif'; // Importa el GIF animado
+
 function BuscarScreen() {
   const [buscarResult, setBuscarResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [postalCode, setPostalCode] = useState('');
-  const [historial, setHistorial] = useContext(HistoryContext); // Obtener el historial del contexto
-  const [errorMessage, setErrorMessage] = useState(''); // State variable for error message
+  const [showLoading, setShowLoading] = useState(false); // Nueva variable de estado
+  const [historial, setHistorial] = useContext(HistoryContext);
+  const [errorMessage, setErrorMessage] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -24,7 +27,6 @@ function BuscarScreen() {
   }, [location.state, setHistorial]);
 
   useEffect(() => {
-    // Actualizar el estado de ubicación con el historial actualizado
     navigate('/', { state: { historial }, replace: true });
   }, [historial, navigate]);
 
@@ -38,6 +40,8 @@ function BuscarScreen() {
 
   const handleSearch = async (code) => {
     try {
+      setShowLoading(true); // Mostrar el GIF animado
+
       setLoading(true);
       let buscarData = null;
 
@@ -47,6 +51,7 @@ function BuscarScreen() {
           setErrorMessage('');
         }, 2000);
         setLoading(false);
+        setShowLoading(false); // Ocultar el GIF animado
         return;
       }
 
@@ -57,6 +62,7 @@ function BuscarScreen() {
         }, 2000);
         setBuscarResult(null);
         setLoading(false);
+        setShowLoading(false); // Ocultar el GIF animado
         return;
       }
 
@@ -67,16 +73,19 @@ function BuscarScreen() {
         }, 2000);
         setBuscarResult(null);
         setLoading(false);
+        setShowLoading(false); // Ocultar el GIF animado
         return;
       }
 
       const zipopotamResponse = await fetch(`https://api.zippopotam.us/es/${code}`);
       if (!zipopotamResponse.ok) {
+        setErrorMessage('El codigo introducido no está asociado a alguna ciudad.');
         setTimeout(() => {
           setErrorMessage('');
         }, 2000);
         setBuscarResult(null);
         setLoading(false);
+        setShowLoading(false); // Ocultar el GIF animado
         return;
       }
       const zipopotamData = await zipopotamResponse.json();
@@ -89,6 +98,7 @@ function BuscarScreen() {
         }, 2000);
         setBuscarResult(null);
         setLoading(false);
+        setShowLoading(false); // Ocultar el GIF animado
         return;
       }
 
@@ -107,6 +117,7 @@ function BuscarScreen() {
         }, 2000);
         setBuscarResult(null);
         setLoading(false);
+        setShowLoading(false); // Ocultar el GIF animado
         return;
       }
       const openMeteoData = await openMeteoResponse.json();
@@ -127,8 +138,8 @@ function BuscarScreen() {
 
       setBuscarResult(buscarData);
       setLoading(false);
+      setShowLoading(false); // Ocultar el GIF animado
 
-      // Añadir la búsqueda al historial
       setHistorial((prevHistorial) => [...prevHistorial, buscarData]);
     } catch (error) {
       console.error(error);
@@ -138,12 +149,12 @@ function BuscarScreen() {
       }, 2000);
       setBuscarResult(null);
       setLoading(false);
+      setShowLoading(false); // Ocultar el GIF animado
     }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     handleSearch(postalCode);
   };
 
@@ -157,12 +168,12 @@ function BuscarScreen() {
         disabled={loading}
       />
       {errorMessage && <p>{errorMessage}</p>}
-      {loading && <p>Realizando búsqueda...</p>}
+      {showLoading && <img src={loadingGif} alt="Loading" className="loading-gif" />} 
       {buscarResult && (
         <div>
           <h2>Ciudad: {buscarResult.city}</h2>
           <CollapsibleCard title="Información política">
-          <Card data={buscarResult} regionAbbreviation={buscarResult.regionAbbreviation} />
+            <Card data={buscarResult} />
           </CollapsibleCard>
           <CollapsibleCard title="Información climática">
             <ClimaCard data={buscarResult} />

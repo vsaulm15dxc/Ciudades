@@ -1,7 +1,8 @@
 .collapsible-card {
-    background-color: #4723b0;
+    background-color: rgba(71, 71, 255, 0.993);
     padding: 10px;
     margin-bottom: 10px;
+    
   }
   
   .card-header {

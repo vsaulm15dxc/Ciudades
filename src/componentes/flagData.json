@@ -1,0 +1,22 @@
+[
+    { "abbreviation": "AR", "fileName": "AR" },
+    { "abbreviation": "AN", "fileName": "AN" },
+    { "abbreviation": "O", "fileName": "O" },
+    { "abbreviation": "IB", "fileName": "IB" },
+    { "abbreviation": "CN", "fileName": "CN" },
+    { "abbreviation": "S", "fileName": "S" },
+    { "abbreviation": "CL", "fileName": "CL" },
+    { "abbreviation": "CM", "fileName": "CM" },
+    { "abbreviation": "CT", "fileName": "CT" },
+    { "abbreviation": "VC", "fileName": "VC" },
+    { "abbreviation": "EX", "fileName": "EX" },
+    { "abbreviation": "GA", "fileName": "GA" },
+    { "abbreviation": "M", "fileName": "M" },
+    { "abbreviation": "MU", "fileName": "MU" },
+    { "abbreviation": "NA", "fileName": "NA" },
+    { "abbreviation": "PV", "fileName": "PV" },
+    { "abbreviation": "LO", "fileName": "LO" },
+    { "abbreviation": "CE", "fileName": "CE" },
+    { "abbreviation": "ML", "fileName": "ML" }
+  ]
+  
