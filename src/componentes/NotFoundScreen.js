@@ -8,7 +8,7 @@ function NotFoundScreen(){
         <MainMenu />
         <h1>404</h1>
         <h2>Pagina no  Encontrada</h2>
-        <p>La paginna que buscas no existe</p>
+        <p>La pagina que buscas no existe</p>
         <Link to="/">Volver a Buscar</Link>
         </div>
     );

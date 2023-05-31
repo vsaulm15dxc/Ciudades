@@ -13,6 +13,7 @@ function BuscarScreen() {
   const [loading, setLoading] = useState(false);
   const [postalCode, setPostalCode] = useState('');
   const [historial, setHistorial] = useContext(HistoryContext); // Obtener el historial del contexto
+  const [errorMessage, setErrorMessage] = useState(''); // State variable for error message
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -34,15 +35,46 @@ function BuscarScreen() {
       setLoading(false);
     }
   }, [location.state]);
-  
 
   const handleSearch = async (code) => {
     try {
       setLoading(true);
       let buscarData = null;
 
+      if (!code) {
+        setErrorMessage('El código postal no puede estar vacío.');
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 2000);
+        setLoading(false);
+        return;
+      }
+
+      if (!/^\d+$/.test(code)) {
+        setErrorMessage('El código postal debe ser numérico.');
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 2000);
+        setBuscarResult(null);
+        setLoading(false);
+        return;
+      }
+
+      if (code.length !== 5) {
+        setErrorMessage('El código postal debe tener 5 dígitos.');
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 2000);
+        setBuscarResult(null);
+        setLoading(false);
+        return;
+      }
+
       const zipopotamResponse = await fetch(`https://api.zippopotam.us/es/${code}`);
       if (!zipopotamResponse.ok) {
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 2000);
         setBuscarResult(null);
         setLoading(false);
         return;
@@ -51,6 +83,10 @@ function BuscarScreen() {
 
       const placeName = zipopotamData?.places?.[0]?.['place name'];
       if (!placeName) {
+        setErrorMessage('No se encontró información para el código postal ingresado.');
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 2000);
         setBuscarResult(null);
         setLoading(false);
         return;
@@ -65,6 +101,10 @@ function BuscarScreen() {
         `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=weathercode&forecast_days=1`
       );
       if (!openMeteoResponse.ok) {
+        setErrorMessage('No se pudo obtener la información climática.');
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 2000);
         setBuscarResult(null);
         setLoading(false);
         return;
@@ -89,9 +129,13 @@ function BuscarScreen() {
       setLoading(false);
 
       // Añadir la búsqueda al historial
-      setHistorial(prevHistorial => [...prevHistorial, buscarData]);
+      setHistorial((prevHistorial) => [...prevHistorial, buscarData]);
     } catch (error) {
       console.error(error);
+      setErrorMessage('Ha ocurrido un error. Por favor, inténtalo de nuevo más tarde.');
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 2000);
       setBuscarResult(null);
       setLoading(false);
     }
@@ -99,16 +143,6 @@ function BuscarScreen() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    if (!postalCode) {
-      alert('Ingrese un código postal válido');
-      return;
-    }
-
-    if (isNaN(postalCode)) {
-      alert('El código postal debe ser numérico');
-      return;
-    }
 
     handleSearch(postalCode);
   };
@@ -122,15 +156,13 @@ function BuscarScreen() {
         onSubmit={handleSubmit}
         disabled={loading}
       />
-      {!buscarResult && !loading && postalCode && (
-        <p>No se encontró información para el código postal ingresado.</p>
-      )}
+      {errorMessage && <p>{errorMessage}</p>}
       {loading && <p>Realizando búsqueda...</p>}
       {buscarResult && (
         <div>
           <h2>Ciudad: {buscarResult.city}</h2>
           <CollapsibleCard title="Información política">
-            <Card data={buscarResult} />
+          <Card data={buscarResult} regionAbbreviation={buscarResult.regionAbbreviation} />
           </CollapsibleCard>
           <CollapsibleCard title="Información climática">
             <ClimaCard data={buscarResult} />
