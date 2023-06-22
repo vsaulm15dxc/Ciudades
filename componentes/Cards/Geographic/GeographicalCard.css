@@ -1,0 +1,30 @@
+.map-link-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.map-link {
+  display: flex;
+  align-items: center;
+  background-color: blue;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+.map-link:hover {
+  background-color: darkblue;
+}
+
+.map-link .map-icon-wrapper {
+  width: 60px;
+  height: 100px;
+}
+
+.map-link .map-icon {
+  width: 200%;
+  height: 100%;
+  margin-right: 10px;
+}
