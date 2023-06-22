@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import BuscarScreen from './BuscarScreen';
-import HistorialScreen from './HistorialScreen';
-import { HistorialProvider } from './HistorialProvider';
-import NotFoundScreen from './NotFoundScreen';
+import BuscarScreen from './BuscarScreen/BuscarScreen';
+import HistorialScreen from './Historial/HistorialScreen';
+import { HistorialProvider } from './Historial/HistorialProvider';
+import NotFoundScreen from './PantallaError/NotFoundScreen';
 
 
 function App() {

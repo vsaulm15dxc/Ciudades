@@ -1,0 +1,39 @@
+.search-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 10px;
+    margin: 20px;
+  } 
+
+.postal-code {
+    margin: 10px;
+    background-color: rgba(71, 71, 255, 0.993);
+    font-weight: bold;
+    color:white;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  
+  .search-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .search-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f4f4f4;
+    border-radius: 4px;
+  }
+  

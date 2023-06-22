@@ -1,0 +1,44 @@
+.collapsible-card {
+    background-color: rgba(71, 71, 255, 0.993);
+    padding: 10px;
+    margin-bottom: 10px;
+    
+  }
+  
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .card-header h3 {
+    margin: 0;
+  }
+  
+  .toggle-button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: auto; /* Posicionar a la derecha */
+  }
+  
+  .card-content {
+    background-color: white;
+    padding: 10px;
+  }
+  
+  .collapsible-card .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .collapsible-card .card-title {
+    text-align: center;
+  }
+  
+  
